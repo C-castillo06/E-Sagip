@@ -1,0 +1,146 @@
+/* Load two Google fonts up front: Space Grotesk (headings) and IBM Plex Sans (body). */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+ 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+/* Base page/body resets */
+body{margin:0;padding:0;min-height:100%;font-family:'IBM Plex Sans',Arial,sans-serif;color:#211B19}
+body{background:#fff}
+button,input{font:inherit} /* buttons/inputs don't inherit font by default in most browsers — force it */
+.leaflet-container{font-family:'IBM Plex Sans',sans-serif} /* keep the map's own font consistent with the app */
+ 
+/* ===== Auth pages (login/register) layout: two-column split screen ===== */
+.auth-shell{height:100vh;display:grid;grid-template-columns:35% 65%;font-family:'IBM Plex Sans',sans-serif;overflow:hidden}
+.auth-brand{color:#fff;padding:3rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;transition:background-color .25s ease} /* left colored panel; transitions smoothly when department (theme) changes */
+.auth-brand>*{position:relative;z-index:1} /* keeps real content above the decorative circles below */
+.auth-brand:before,.auth-brand:after{content:'';position:absolute;border:1px solid rgba(255,255,255,.35);border-radius:999px;pointer-events:none} /* two decorative faint ring outlines */
+.auth-brand:before{width:22rem;height:22rem;right:-10rem;top:-7rem}
+.auth-brand:after{width:14rem;height:14rem;left:-6rem;bottom:3rem}
+.auth-logo{display:block;width:260px;max-width:100%;height:auto;filter:brightness(0) invert(1);} /* forces the logo to render pure white regardless of source colors */
+.brand-role-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:700}
+.auth-form-wrap{background:white;display:flex;justify-content:flex-start;align-items:flex-start;height:100%;overflow-y:auto;box-sizing:border-box;padding:1rem 2rem}
+.eyebrow{font-size:0.800rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#9b928c}
+ 
+/* Form field styling shared across login/register */
+.field-label{display:block;font-size: 0.875rem;font-weight:700;color:#4b4541;margin-bottom:6px}
+.field{width:100%;height:50px;padding:0 12px;border:1px solid #e5e1dd;border-radius:9px;background:#fff;font-size:14px;outline:none;box-sizing:border-box}
+.field:focus{border-color:#8f8780;box-shadow:0 0 0 3px rgba(33,27,25,.06)} /* generic focus ring; overridden per-theme further down */
+ 
+/* Department-selector tile (used on login) */
+.role-card{position:relative;min-height:92px;border:2px solid #f1efec;border-radius:12px;background:#fff;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}
+.icon-box{width:32px;height:32px;border-radius:8px;display:grid;place-items:center}
+ 
+/* Shared button styles */
+.primary-btn,.secondary-btn,.icon-btn,.profile-btn{height:40px;border-radius:9px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:0 14px;transition:.15s}
+.primary-btn{justify-content:center}
+.secondary-btn{border:1px solid #e5e1dd;background:#fff;color:#3f3935}
+.secondary-btn:hover{background:#f8f7f5}
+.icon-btn{width:40px;justify-content:center;border:1px solid #e5e1dd;background:#fff}
+.profile-btn{border:1px solid #e5e1dd;background:#fff;padding:4px 8px 4px 5px}
+ 
+/* ===== Dashboard layout pieces ===== */
+.queue-panel{width:380px;background:white;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;z-index:10}
+.status-pill{font-size:9px;text-transform:uppercase;font-weight:800;padding:4px 7px;border-radius:5px;display:inline-flex}
+.status-pill.pending{background:#fee2e2;color:#b91c1c}   /* red = needs attention */
+.status-pill.accepted{background:#fef3c7;color:#92400e}  /* amber = in progress */
+.status-pill.resolved{background:#f3f4f6;color:#6b7280}  /* grey = done */
+.live-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase}
+.tab-btn{height:48px;padding:0 0;border-bottom:2px solid transparent;font-size:13px;font-weight:700;color:#6b7280} /* NOTE: no .tab-btn class is actually used anywhere in the JSX shown — looks unused/leftover */
+.profile-menu{position:absolute;right:0;top:48px;width:220px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 15px 35px rgba(0,0,0,.12);overflow:hidden;z-index:1000}
+.menu-item{display:block;width:100%;padding:10px 12px;text-align:left;font-size:13px;font-weight:600}
+.menu-item:hover{background:#f8f7f5}
+.toast{position:fixed;right:24px;bottom:24px;z-index:2000;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:12px 15px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+ 
+/* ===== Responsive breakpoints ===== */
+@media(max-width:900px){
+  .auth-shell{grid-template-columns:1fr}   /* collapse to single column, brand panel hidden below */
+  .auth-brand{display:none}
+  .auth-form-wrap{padding:2rem 1.25rem}
+  .queue-panel{width:320px}
+}
+@media(max-width:700px){
+  .queue-panel{width:100%;max-width:100%}  /* queue list takes full width on phones */
+  .map-pane{display:none}                  /* map is dropped entirely on small screens */
+  .auth-form-wrap{align-items:flex-start;padding-top:3rem}
+  .incident-card{position:fixed;top:auto;right:0;left:0;bottom:0;width:100%;max-width:100%;border-radius:16px 16px 0 0;max-height:75vh;overflow-y:auto;box-shadow:0 -10px 35px rgba(0,0,0,.2)} /* becomes a bottom sheet on mobile */
+}
+ 
+/* Generic centered modal overlay, used by HistoryDetailModal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,12,11,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:3000}
+.modal-panel{width:100%;max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 25px 60px rgba(0,0,0,.25)}
+ 
+/* Register page needs its own scroll container since the form is taller than the auth-form-wrap flex-centering allows */
+.auth-register-wrap{height:100%;overflow-y:auto;box-sizing:border-box}
+.auth-register-wrap>div{padding-bottom:1rem}
+.register-submit{min-height:44px;visibility:visible;opacity:1;position:relative;z-index:2} /* explicit visibility/z-index — likely defensive fix for a submit button that was getting clipped/hidden */
+.register-submit:disabled{opacity:.72}
+.register-submit:not(:disabled):hover{filter:brightness(.92)}
+@media(max-width:900px){
+  .auth-register-wrap{align-items:flex-start;padding-top:2rem;padding-bottom:2rem}
+  .auth-register-wrap>div{max-width:640px}
+}
+ 
+/* Department theme accents are supplied by the selected role on auth pages. */
+/* These rules read the --theme-accent CSS var set inline in login/register page.js, so
+   focus rings and hover states automatically match whichever department is selected. */
+.auth-shell .field:focus{border-color:var(--theme-accent,#DC2626);box-shadow:0 0 0 3px color-mix(in srgb,var(--theme-accent,#DC2626) 12%,transparent)}
+.auth-shell .field:focus-visible{outline:none}
+.auth-shell .primary-btn{transition:background-color .15s ease,box-shadow .15s ease,filter .15s ease}
+.auth-shell .primary-btn:not(:disabled):hover{filter:brightness(.94)}
+ 
+/* Coverage radius slider: colored fill on a white track */
+.radius-slider{-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;border:1px solid #e5e7eb;outline:none;cursor:pointer;
+  background:linear-gradient(to right,var(--slider-color) 0,var(--slider-color) var(--fill),#fff var(--fill),#fff 100%)}
+.radius-slider::-moz-range-track{background:transparent}
+.radius-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--slider-color);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.radius-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--slider-color);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+
+/* ========================================
+   STATION LOCATION PICKER
+   ======================================== */
+ 
+.station-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+ 
+input[type='range'] {
+  accent-color: var(--theme-accent, #DC2626);
+}
+ 
+.register-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: start;
+}
+
+/* Compact input height (down from 44px) */
+.field {
+  height: 36px;
+}
+
+/* Slimmer department selector cards */
+.role-card {
+  min-height: 52px;
+  padding: 8px 12px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+/* Reduced map height so button remains visible */
+.station-map {
+  height: 220px;
+}
+
+/* Custom overrides for only the station address field */
+.station-field {
+  height: 40px;        /* Custom height */
+  font-size: 13px;     /* Custom font size */
+  border-radius: 6px;  /* Custom corner radius */
+}
+
