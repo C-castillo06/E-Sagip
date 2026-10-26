@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Download,
   Phone,
-  RefreshCw,
   Timer,
   Trash2,
   Users,
@@ -988,7 +987,7 @@ function HistoryDetailModal({ alert, theme, onClose }) {
 // SETTINGS VIEW
 // ============================================================
 
-export function SettingsView({ settings, toggle, theme, session, resetData }) {
+export function SettingsView({ settings, toggle, theme, session }) {
   return (
     <div className="flex-1 overflow-y-auto p-8">
 
@@ -999,7 +998,7 @@ export function SettingsView({ settings, toggle, theme, session, resetData }) {
         </h2>
 
         <p className="text-sm text-gray-500 mt-1 mb-7">
-          Manage dispatcher preferences and locally stored console data.
+          Manage dispatcher preferences and notification behavior.
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -1073,19 +1072,6 @@ export function SettingsView({ settings, toggle, theme, session, resetData }) {
               value="Live / Connected"
               green
             />
-          </SettingsCard>
-
-          <SettingsCard
-            title="Incident records"
-            desc="Manage data stored for this console."
-          >
-            <button
-              onClick={resetData}
-              className="secondary-btn"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Reset incident records
-            </button>
           </SettingsCard>
 
         </div>
