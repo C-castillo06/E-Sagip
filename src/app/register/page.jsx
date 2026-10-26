@@ -20,16 +20,16 @@ import DepartmentPicker from '../../components/auth/dpt';
 
 const BRAND_COPY = {
   fire: {
-    title: 'Join the fire response team.',
-    desc: 'Create a dispatcher profile to manage fire calls and coordinate engine dispatch.'
+    title: 'Join the fire operations team.',
+    desc: 'Request operator access to manage fire calls and coordinate response.'
   },
   medical: {
-    title: 'Join the medical response team.',
-    desc: 'Create a dispatcher profile to triage calls and coordinate medical response.'
+    title: 'Join the medical operations team.',
+    desc: 'Request operator access to triage calls and coordinate medical response.'
   },
-  crime: {
-    title: 'Join the police response team.',
-    desc: 'Create a dispatcher profile to review reports and coordinate patrol response.'
+  rescue: {
+    title: 'Join the rescue operations team.',
+    desc: 'Request operator access to coordinate rescue and flood response.'
   }
 };
 
@@ -626,7 +626,7 @@ export default function RegisterPage() {
     );
   }, [role]);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
 
     const elements = e.currentTarget.elements;
@@ -660,7 +660,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const { error: registerError } = registerUser({
+    const result = await registerUser({
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
@@ -676,13 +676,13 @@ export default function RegisterPage() {
       }
     });
 
-    if (registerError) {
-      // Show the server-side error on the field it belongs to.
-      const target = /password/i.test(registerError)
+    if (result.error) {
+      // Show the Firebase error on the field it belongs to.
+      const target = /password/i.test(result.error)
         ? elements.password
         : elements.email;
 
-      showBubble(target, registerError);
+      showBubble(target, result.error);
       return;
     }
 
@@ -694,7 +694,7 @@ export default function RegisterPage() {
 return (
     <AuthLayout
       theme={selectedTheme}
-      eyebrow="Create account"
+      eyebrow="Operator registration"
       copy={copy}
       shellClassName="auth-register-shell"
       formWrapClassName="auth-register-wrap"
