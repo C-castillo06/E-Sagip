@@ -19,9 +19,9 @@ const BRAND_COPY = {
     title: 'Medical response access.',
     desc: 'Triage calls, dispatch responders, and monitor ongoing medical incidents.'
   },
-  crime: {
-    title: 'Crime & police access.',
-    desc: 'Review reports, coordinate patrol response, and track case status.'
+  rescue: {
+    title: 'Rescue response access.',
+    desc: 'Coordinate rescue units, monitor emergencies, and track response status.'
   }
 };
 
@@ -52,32 +52,32 @@ export default function LoginPage() {
     setRegistered(params.get('registered') === '1');
   }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
     setError('');
 
     if (!role) return setError('Please select your dispatch department.');
 
-    const { error: loginError } = loginUser({ email, password, role });
-    if (loginError) return setError(loginError);
+    const result = await loginUser({ email, password, role });
+    if (result.error) return setError(result.error);
 
     router.push('/dashboard');
   }
 
   return (
-    <AuthLayout theme={selectedTheme} eyebrow="Responder access" copy={copy}>
+    <AuthLayout theme={selectedTheme} eyebrow="Operator access" copy={copy}>
       <div className="eyebrow" style={{ color: 'var(--theme-accent)' }}>
-        Responder access
+        Operator access
       </div>
 
       <h2 className="mt-2 text-3xl font-bold">Sign in</h2>
       <p className="mt-2 text-sm text-gray-500">
-        Choose the department assigned to your account.
+        Choose the dispatch department assigned to your operator account.
       </p>
 
       {registered && (
         <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-          Account created. Please sign in to open the dispatch console.
+          Registration submitted. Your operator account must be approved by an administrator before you can sign in.
         </div>
       )}
 
