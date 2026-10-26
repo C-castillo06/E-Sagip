@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, ChevronDown, Siren } from 'lucide-react';
+import { CheckCircle2, ChevronDown } from 'lucide-react';
 
 import Sidebar from '../../components/dashboard/Sidebar';
 import QueueList from '../../components/dashboard/QueueList';
@@ -56,8 +56,6 @@ export default function DashboardPage() {
     handleSelectIncident,
     exportHistory,
     clearHistory,
-    resetData,
-    simulate
   } = useIncidents({ role, theme, soundEnabled: settings.sound, flash });
 
   // ========================================
@@ -129,11 +127,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button onClick={simulate} className="secondary-btn hidden sm:flex">
-              <Siren className="h-4 w-4" />
-              Run Drill Alert
-            </button>
-
             <div className="relative">
               <button onClick={() => setProfileOpen(v => !v)} className="profile-btn">
                 <span
@@ -314,7 +307,6 @@ export default function DashboardPage() {
             toggle={toggle}
             theme={theme}
             session={session}
-            resetData={resetData}
           />
         )}
 
